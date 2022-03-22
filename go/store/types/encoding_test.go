@@ -58,7 +58,7 @@ func toBinaryNomsReaderData(data []interface{}) []byte {
 		case NomsKind:
 			w.writeUint8(uint8(v))
 		default:
-			panic("unreachable at index " + strconv.FormatInt(int64(i), 10))
+			panic("unreachable 16 at index " + strconv.FormatInt(int64(i), 10))
 		}
 	}
 	return w.data()

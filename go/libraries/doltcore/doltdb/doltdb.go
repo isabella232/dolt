@@ -739,6 +739,7 @@ func (ddb *DoltDB) GetHeadRefs(ctx context.Context) ([]ref.DoltRef, error) {
 func (ddb *DoltDB) VisitRefsOfType(ctx context.Context, refTypeFilter map[ref.RefType]struct{}, visit func(r ref.DoltRef, addr hash.Hash) error) error {
 	dss, err := ddb.db.Datasets(ctx)
 	if err != nil {
+		fmt.Println("DUSTIN VisitRefsOfType ddb.db.Datasets err:", err)
 		return err
 	}
 
@@ -749,12 +750,14 @@ func (ddb *DoltDB) VisitRefsOfType(ctx context.Context, refTypeFilter map[ref.Re
 		if ref.IsRef(keyStr) {
 			dref, err = ref.Parse(keyStr)
 			if err != nil {
+				fmt.Println("DUSTIN VisitRefsOfType dss.IterAll ref.Parse err:", err)
 				return err
 			}
 
 			if _, ok := refTypeFilter[dref.GetType()]; ok {
 				err = visit(dref, addr)
 				if err != nil {
+					fmt.Println("DUSTIN VisitRefsOfType dss.IterAll visit err:", err)
 					return err
 				}
 			}

@@ -183,7 +183,7 @@ func compareEncodedNomsValues(a, b []byte) int {
 	case InlineBlobKind:
 		return bytes.Compare(a, b)
 	}
-	panic("unreachable")
+	panic("unreachable 13")
 }
 
 func compareEmpties(a, b []byte) (bool, int) {

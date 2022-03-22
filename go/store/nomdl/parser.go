@@ -446,7 +446,7 @@ func (p *Parser) parseValue(ctx context.Context) (types.Value, error) {
 
 	p.lex.unexpectedToken(tok)
 
-	panic("unreachable")
+	panic("unreachable 8")
 }
 
 func (p *Parser) parseFloat() types.Float {

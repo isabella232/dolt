@@ -564,11 +564,11 @@ func readBlob(ctx context.Context, r io.Reader, vrw ValueReadWriter) (Blob, erro
 }
 
 func (b Blob) readFrom(nbf *NomsBinFormat, bnr *binaryNomsReader) (Value, error) {
-	panic("unreachable")
+	panic("unreachable 11")
 }
 
 func (b Blob) skip(nbf *NomsBinFormat, bnr *binaryNomsReader) {
-	panic("unreachable")
+	panic("unreachable 12")
 }
 
 func (b Blob) String() string {

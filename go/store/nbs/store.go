@@ -175,9 +175,15 @@ func (nbs *NomsBlockStore) GetChunkLocations(hashes hash.HashSet) (map[hash.Hash
 				for _, h := range foundHashes {
 					delete(hashes, h)
 				}
+			//
+			//case *persistingChunkSource:
+			//	return errors.New("DUSTIN someone fix me!!!")
 
 			default:
-				panic(reflect.TypeOf(cs))
+				t := reflect.TypeOf(cs)
+				fmt.Printf("GetChunkLocations default %T\n", t)
+				fmt.Println("GetChunkLocations t.String:", t.String())
+				panic(t.String())
 			}
 
 		}
@@ -523,6 +529,7 @@ func newLocalStore(ctx context.Context, nbfVerStr string, dir string, memTableSi
 	}
 
 	mm := makeManifestManager(m)
+	fmt.Println("DUSTIN newLocalStore newFSTablePersister")
 	p := newFSTablePersister(dir, globalFDCache, globalIndexCache)
 	nbs, err := newNomsBlockStore(ctx, nbfVerStr, mm, p, inlineConjoiner{maxTables}, memTableSize)
 

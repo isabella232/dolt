@@ -23,6 +23,7 @@ package types
 
 import (
 	"encoding/binary"
+	"fmt"
 	"math"
 	"time"
 	"unsafe"
@@ -57,6 +58,7 @@ func decodeFromBytes(data []byte, vrw ValueReadWriter) (Value, error) {
 	v, err := dec.readValue(vrw.Format())
 
 	if err != nil {
+		fmt.Println("DUSTIN decodeFromBytes dec.readValue(vrw.Format()) err:", err)
 		return nil, err
 	}
 

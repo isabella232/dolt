@@ -514,7 +514,7 @@ func (ms metaSequence) getCompositeChildSequence(ctx context.Context, start uint
 		return newSetLeafSequence(ms.vrw, valueItems...)
 	}
 
-	panic("unreachable")
+	panic("unreachable 28")
 }
 
 // fetches child sequences from start (inclusive) to end (exclusive).

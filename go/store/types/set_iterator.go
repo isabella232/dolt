@@ -201,7 +201,7 @@ func (u *UnionIterator) Next(ctx context.Context) (Value, error) {
 	case 1:
 		return u.bState.Next(ctx)
 	}
-	panic("Unreachable")
+	panic("Unreachable 37")
 }
 
 func (u *UnionIterator) SkipTo(ctx context.Context, v Value) (Value, error) {
@@ -250,7 +250,7 @@ func (u *UnionIterator) SkipTo(ctx context.Context, v Value) (Value, error) {
 	case 1:
 		return u.bState.Next(ctx)
 	}
-	panic("Unreachable")
+	panic("Unreachable 38")
 }
 
 // IntersectionIterator only returns values that are returned in both of its child iterators.

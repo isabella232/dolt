@@ -27,6 +27,7 @@ package sizecache
 // SizeCache
 import (
 	"container/list"
+	"fmt"
 	"sync"
 
 	"github.com/dolthub/dolt/go/store/d"
@@ -73,9 +74,12 @@ func NewWithExpireCallback(maxSize uint64, cb ExpireCallback) *SizeCache {
 func (c *SizeCache) entry(key interface{}) (sizeCacheEntry, bool) {
 	entry, ok := c.cache[key]
 	if !ok {
+		fmt.Println("DUSTIN SizeCache entry(key) not ok")
 		return sizeCacheEntry{}, false
 	}
+	fmt.Println("DUSTIN SizeCache entry(key) c.cache[key] move to back start")
 	c.lru.MoveToBack(entry.lruEntry)
+	fmt.Println("DUSTIN SizeCache entry(key) c.cache[key] move to back stop")
 	return entry, true
 }
 
@@ -87,8 +91,11 @@ func (c *SizeCache) Get(key interface{}) (interface{}, bool) {
 	defer c.mu.Unlock()
 
 	if entry, ok := c.entry(key); ok {
+		//fmt.Printf("DUSTIN SizeCache Get c.entry(key) ok: %+v\n", entry)
+		fmt.Printf("DUSTIN SizeCache Get c.entry(key) ok: %+v\n", entry.value)
 		return entry.value, true
 	}
+	fmt.Println("DUSTIN SizeCache Get c.entry(key) not ok, nil, false")
 	return nil, false
 }
 

@@ -195,15 +195,15 @@ func indexOfType(t *Type, tl []*Type) (uint32, bool) {
 }
 
 func (t *Type) readFrom(nbf *NomsBinFormat, b *binaryNomsReader) (Value, error) {
-	panic("unreachable")
+	panic("unreachable 48")
 }
 
 func (t *Type) skip(nbf *NomsBinFormat, b *binaryNomsReader) {
-	panic("unreachable")
+	panic("unreachable 49")
 }
 
 func (t *Type) String() string {
-	panic("unreachable")
+	panic("unreachable 50")
 }
 
 func (t *Type) HumanReadableString() string {

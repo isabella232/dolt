@@ -524,17 +524,17 @@ func newEmptyListSequenceChunker(ctx context.Context, vrw ValueReadWriter) (*seq
 }
 
 func (l List) readFrom(nbf *NomsBinFormat, b *binaryNomsReader) (Value, error) {
-	panic("unreachable")
+	panic("unreachable 20")
 }
 
 func (l List) skip(nbf *NomsBinFormat, b *binaryNomsReader) {
-	panic("unreachable")
+	panic("unreachable 21")
 }
 
 func (l List) String() string {
-	panic("unreachable")
+	panic("unreachable 22")
 }
 
 func (l List) HumanReadableString() string {
-	panic("unreachable")
+	panic("unreachable 23")
 }

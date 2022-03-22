@@ -76,15 +76,23 @@ func (db *database) StatsSummary() string {
 // DatasetsInRoot returns the Map of datasets in the root represented by the |rootHash| given
 func (db *database) loadDatasetsNomsMap(ctx context.Context, rootHash hash.Hash) (types.Map, error) {
 	if rootHash.IsEmpty() {
+		fmt.Println("DUSTIN loadDatasetsNomsMap rootHash.IsEmpty")
 		return types.NewMap(ctx, db)
 	}
 
 	val, err := db.ReadValue(ctx, rootHash)
 	if err != nil {
+		fmt.Println("DUSTIN loadDatasetsNomsMap db.ReadValue err:", err)
+		fmt.Println("DUSTIN loadDatasetsNomsMap db.ReadValue err val:", val)
+		fmt.Println("DUSTIN loadDatasetsNomsMap db.ReadValue err == nil:", err == nil)
 		return types.EmptyMap, err
 	}
 
-	return val.(types.Map), nil
+	fmt.Println("DUSTIN loadDatasetsNomsMap val.(types.Map) start:", val)
+	m := val.(types.Map)
+	fmt.Printf("DUSTIN loadDatasetsNomsMap val.(types.Map) stop m: %+v", m)
+
+	return m, nil
 }
 
 func (db *database) loadDatasetsRefmap(ctx context.Context, rootHash hash.Hash) (refmap, error) {
@@ -277,12 +285,14 @@ func (m nomsDatasetsMap) IterAll(ctx context.Context, cb func(string, hash.Hash)
 func (db *database) Datasets(ctx context.Context) (DatasetsMap, error) {
 	rootHash, err := db.rt.Root(ctx)
 	if err != nil {
+		fmt.Println("DUSTIN database Datasets db.rt.Root err:", err)
 		return nil, err
 	}
 
 	if db.Format() == types.Format_DOLT_DEV {
 		rm, err := db.loadDatasetsRefmap(ctx, rootHash)
 		if err != nil {
+			fmt.Println("DUSTIN database Datasets db.loadDatasetsRefmap err:", err)
 			return nil, err
 		}
 		return refmapDatasetsMap{rm}, nil
@@ -290,6 +300,7 @@ func (db *database) Datasets(ctx context.Context) (DatasetsMap, error) {
 
 	m, err := db.loadDatasetsNomsMap(ctx, rootHash)
 	if err != nil {
+		fmt.Println("DUSTIN database Datasets db.loadDatasetsNomsMap(ctx, rootHash) err:", err)
 		return nil, err
 	}
 

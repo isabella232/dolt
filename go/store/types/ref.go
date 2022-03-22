@@ -208,19 +208,19 @@ func (r Ref) isSameTargetType(other Ref) bool {
 }
 
 func (r Ref) readFrom(nbf *NomsBinFormat, b *binaryNomsReader) (Value, error) {
-	panic("unreachable")
+	panic("unreachable 29")
 }
 
 func (r Ref) skip(nbf *NomsBinFormat, b *binaryNomsReader) {
-	panic("unreachable")
+	panic("unreachable 30")
 }
 
 func (r Ref) String() string {
-	panic("unreachable")
+	panic("unreachable 31")
 }
 
 func (r Ref) HumanReadableString() string {
-	panic("unreachable")
+	panic("unreachable 32")
 }
 
 // Returns a function that can be used to walk the hash and height of all the

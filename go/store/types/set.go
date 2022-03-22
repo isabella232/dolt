@@ -350,17 +350,17 @@ func newSetChunker(nbf *NomsBinFormat, salt byte) sequenceSplitter {
 }
 
 func (s Set) readFrom(nbf *NomsBinFormat, b *binaryNomsReader) (Value, error) {
-	panic("unreachable")
+	panic("unreachable 33")
 }
 
 func (s Set) skip(nbf *NomsBinFormat, b *binaryNomsReader) {
-	panic("unreachable")
+	panic("unreachable 34")
 }
 
 func (s Set) String() string {
-	panic("unreachable")
+	panic("unreachable 35")
 }
 
 func (s Set) HumanReadableString() string {
-	panic("unreachable")
+	panic("unreachable 36")
 }

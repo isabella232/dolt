@@ -193,11 +193,11 @@ func (t JSON) Compare(other JSON) (int, error) {
 }
 
 func (t JSON) readFrom(nbf *NomsBinFormat, b *binaryNomsReader) (Value, error) {
-	panic("unreachable")
+	panic("unreachable 17")
 }
 
 func (t JSON) skip(nbf *NomsBinFormat, b *binaryNomsReader) {
-	panic("unreachable")
+	panic("unreachable 18")
 }
 
 // HumanReadableString implements the Value interface.

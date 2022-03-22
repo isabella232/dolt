@@ -402,7 +402,7 @@ func findCommonNumericType(nums typeInfoSet) typeinfo.TypeInfo {
 		}
 	}
 
-	panic("unreachable")
+	panic("unreachable 1")
 }
 
 func findCommonChronoType(chronos typeInfoSet) typeinfo.TypeInfo {
@@ -431,5 +431,5 @@ func findCommonChronoType(chronos typeInfoSet) typeinfo.TypeInfo {
 		return typeinfo.DatetimeType
 	}
 
-	panic("unreachable")
+	panic("unreachable 2")
 }

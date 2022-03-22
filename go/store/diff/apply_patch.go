@@ -289,7 +289,7 @@ func (stack *patchStack) updateNode(ctx context.Context, top *stackElem, parent 
 			}
 		}
 	}
-	panic(fmt.Sprintf("unreachable, pp.(type): %T", top.pathPart))
+	panic(fmt.Sprintf("unreachable 3, pp.(type): %T", top.pathPart))
 }
 
 // Returns the count of the number of PathParts that two paths have in a common

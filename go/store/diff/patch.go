@@ -94,7 +94,7 @@ func fieldPathCompare(pp types.FieldPath, o types.PathPart) int {
 	case types.HashIndexPath:
 		return -1
 	}
-	panic("unreachable")
+	panic("unreachable 4")
 }
 
 func indexPathCompare(nbf *types.NomsBinFormat, pp types.IndexPath, o types.PathPart) (int, error) {
@@ -120,7 +120,7 @@ func indexPathCompare(nbf *types.NomsBinFormat, pp types.IndexPath, o types.Path
 	case types.HashIndexPath:
 		return -1, nil
 	}
-	panic("unreachable")
+	panic("unreachable 5")
 }
 
 func hashIndexPathCompare(pp types.HashIndexPath, o types.PathPart) int {
@@ -145,7 +145,7 @@ func hashIndexPathCompare(pp types.HashIndexPath, o types.PathPart) int {
 			return 1
 		}
 	}
-	panic("unreachable")
+	panic("unreachable 6")
 }
 
 func pathPartCompare(nbf *types.NomsBinFormat, pp, pp2 types.PathPart) (int, error) {
@@ -157,5 +157,5 @@ func pathPartCompare(nbf *types.NomsBinFormat, pp, pp2 types.PathPart) (int, err
 	case types.HashIndexPath:
 		return hashIndexPathCompare(pp1, pp2), nil
 	}
-	panic("unreachable")
+	panic("unreachable 7")
 }

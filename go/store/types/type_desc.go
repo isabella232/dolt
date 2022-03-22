@@ -274,7 +274,7 @@ func (ts typeSlice) Swap(i, j int) { ts[i], ts[j] = ts[j], ts[i] }
 // validating the order when reading union types from a chunk.
 func unionLess(ti, tj *Type) bool {
 	if ti == tj {
-		panic("unreachable") // unions must not contain the same type twice.
+		panic("unreachable 51") // unions must not contain the same type twice.
 	}
 
 	ki, kj := ti.TargetKind(), tj.TargetKind()
@@ -286,7 +286,7 @@ func unionLess(ti, tj *Type) bool {
 		case CycleKind:
 			return ti.Desc.(CycleDesc) < tj.Desc.(CycleDesc)
 		default:
-			panic("unreachable") // We should have folded all other types into one.
+			panic("unreachable 52") // We should have folded all other types into one.
 		}
 	}
 	return ki < kj

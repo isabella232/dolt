@@ -912,11 +912,11 @@ func (t Tuple) Contains(v Value) (bool, error) {
 }
 
 func (t Tuple) readFrom(nbf *NomsBinFormat, b *binaryNomsReader) (Value, error) {
-	panic("unreachable")
+	panic("unreachable 46")
 }
 
 func (t Tuple) skip(nbf *NomsBinFormat, b *binaryNomsReader) {
-	panic("unreachable")
+	panic("unreachable 47")
 }
 
 func (t Tuple) String() string {

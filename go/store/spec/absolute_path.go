@@ -117,7 +117,7 @@ func (p AbsolutePath) Resolve(ctx context.Context, db datas.Database, vrw types.
 		val, err = vrw.ReadValue(ctx, p.Hash)
 		d.PanicIfError(err)
 	} else {
-		panic("Unreachable")
+		panic("Unreachable 9")
 	}
 
 	if val != nil && p.Path != nil {
@@ -142,7 +142,7 @@ func (p AbsolutePath) String() (str string) {
 	} else if !p.Hash.IsEmpty() {
 		str = "#" + p.Hash.String()
 	} else {
-		panic("Unreachable")
+		panic("Unreachable 10")
 	}
 
 	return str + p.Path.String()

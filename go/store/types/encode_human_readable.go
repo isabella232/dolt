@@ -434,7 +434,7 @@ func (w *hrsWriter) writeSize(v Value) {
 		}
 		w.write(fmt.Sprintf("  // %s items", humanize.Comma(int64(l))))
 	default:
-		panic("unreachable")
+		panic("unreachable 14")
 	}
 }
 
@@ -481,7 +481,7 @@ func (w *hrsWriter) writeType(t *Type, seenStructs map[*Type]struct{}) {
 		if IsPrimitiveKind(t.TargetKind()) {
 			w.write(t.TargetKind().String())
 		} else {
-			panic("unreachable")
+			panic("unreachable 15")
 		}
 	}
 }

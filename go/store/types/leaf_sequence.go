@@ -137,7 +137,7 @@ func (seq leafSequence) getCompareFnHelper(other leafSequence) compareFn {
 }
 
 func (seq leafSequence) getCompareFn(other sequence) compareFn {
-	panic("unreachable")
+	panic("unreachable 19")
 }
 
 func (seq leafSequence) typeOf() (*Type, error) {

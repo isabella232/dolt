@@ -245,6 +245,7 @@ type CacheStats interface {
 
 // Get the Chunk for the value of the hash in the store. If the hash is absent from the store EmptyChunk is returned.
 func (dcs *DoltChunkStore) Get(ctx context.Context, h hash.Hash) (chunks.Chunk, error) {
+	fmt.Println("DUSTIN DoltChunkStore.Get")
 	hashes := hash.HashSet{h: struct{}{}}
 	var found *chunks.Chunk
 	err := dcs.GetMany(ctx, hashes, func(_ context.Context, c *chunks.Chunk) { found = c })
@@ -607,6 +608,8 @@ func (dcs *DoltChunkStore) getDLLocs(ctx context.Context, hashes []hash.Hash) (d
 }
 
 func (dcs *DoltChunkStore) readChunksAndCache(ctx context.Context, hashes hash.HashSet, notCached []hash.Hash, found func(context.Context, nbs.CompressedChunk)) error {
+	fmt.Println("DUSTIN DoltChunkStore.readChunksAndCache")
+
 	// get the locations where the chunks can be downloaded from
 	dlLocs, err := dcs.getDLLocs(ctx, notCached)
 	if err != nil {

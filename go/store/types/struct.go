@@ -659,17 +659,17 @@ func verifyStructName(name string) {
 }
 
 func (s Struct) readFrom(nbf *NomsBinFormat, b *binaryNomsReader) (Value, error) {
-	panic("unreachable")
+	panic("unreachable 39")
 }
 
 func (s Struct) skip(nbf *NomsBinFormat, b *binaryNomsReader) {
-	panic("unreachable")
+	panic("unreachable 40")
 }
 
 func (s Struct) String() string {
-	panic("unreachable")
+	panic("unreachable 41")
 }
 
 func (s Struct) HumanReadableString() string {
-	panic("unreachable")
+	panic("unreachable 42")
 }

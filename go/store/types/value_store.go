@@ -24,6 +24,7 @@ package types
 import (
 	"context"
 	"errors"
+	"fmt"
 	"runtime"
 	"sync"
 
@@ -169,9 +170,11 @@ func (lvs *ValueStore) ReadValue(ctx context.Context, h hash.Hash) (Value, error
 	lvs.versOnce.Do(lvs.expectVersion)
 	if v, ok := lvs.decodedChunks.Get(h); ok {
 		if v == nil {
+			fmt.Println("DUSTIN ReadValue ok v is nil :", "value present but empty")
 			return nil, errors.New("value present but empty")
 		}
 
+		fmt.Printf("DUSTIN ReadValue ok v is not nil: %+v\n", v.(Value))
 		return v.(Value), nil
 	}
 
@@ -187,18 +190,21 @@ func (lvs *ValueStore) ReadValue(ctx context.Context, h hash.Hash) (Value, error
 	if chunk.IsEmpty() {
 		var err error
 		chunk, err = lvs.cs.Get(ctx, h)
-
 		if err != nil {
+			fmt.Printf("DUSTIN lvs.cs is chunkstore %T\n", lvs.cs)
+			fmt.Printf("DUSTIN ReadValue chunk is empty, h is empty: %v lvs.cs.Get(ctx, %+v)\n", h.IsEmpty(), h.String())
+			fmt.Println("DUSTIN ReadValue chunk is empty lvs.cs.Get(ctx, h) :", err)
 			return nil, err
 		}
 	}
 	if chunk.IsEmpty() {
+		fmt.Println("DUSTIN ReadValue chunk is empty, return nil, nil")
 		return nil, nil
 	}
 
 	v, err := DecodeValue(chunk, lvs)
-
 	if err != nil {
+		fmt.Println("DUSTIN ReadValue DecodeValue err:", err)
 		return nil, err
 	}
 
@@ -207,6 +213,7 @@ func (lvs *ValueStore) ReadValue(ctx context.Context, h hash.Hash) (Value, error
 	}
 
 	lvs.decodedChunks.Add(h, uint64(len(chunk.Data())), v)
+	fmt.Printf("DUSTIN ReadValue added decoded Chunk, return %+v, nil\n", v)
 	return v, nil
 }
 

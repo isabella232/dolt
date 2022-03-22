@@ -25,6 +25,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path"
@@ -50,6 +51,7 @@ type fsTablePersister struct {
 }
 
 func (ftp *fsTablePersister) Open(ctx context.Context, name addr, chunkCount uint32, stats *Stats) (chunkSource, error) {
+	fmt.Println("DUSTIN fsTablePersister Open")
 	return newMmapTableReader(ftp.dir, name, chunkCount, ftp.indexCache, ftp.fc)
 }
 

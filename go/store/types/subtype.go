@@ -154,7 +154,7 @@ func isSubtypeDetails(nbf *NomsBinFormat, requiredType, concreteType *Type, hasE
 		return true, hasExtra
 	}
 
-	panic("unreachable")
+	panic("unreachable 43")
 }
 
 // compoundSubtype is called when comparing the element types of two compound types. This is the only case
@@ -259,7 +259,7 @@ func isValueSubtypeOfDetails(nbf *NomsBinFormat, v Value, t *Type, hasExtra bool
 
 		return false, hasExtra, nil
 	case CycleKind:
-		panic("unreachable") // CycleKind are ephemeral.
+		panic("unreachable 44") // CycleKind are ephemeral.
 	default:
 		if IsPrimitiveKind(t.TargetKind()) {
 			return v.Kind() == t.TargetKind(), hasExtra, nil
@@ -404,7 +404,7 @@ func isValueSubtypeOfDetails(nbf *NomsBinFormat, v Value, t *Type, hasExtra bool
 			return isMetaSequenceSubtypeOf(nbf, v.sequence.(metaSequence), t, hasExtra)
 		}
 	}
-	panic("unreachable")
+	panic("unreachable 45")
 }
 
 func isMetaSequenceSubtypeOf(nbf *NomsBinFormat, ms metaSequence, t *Type, hasExtra bool) (bool, bool, error) {

@@ -618,19 +618,19 @@ func newEmptyMapSequenceChunker(ctx context.Context, vrw ValueReadWriter) (*sequ
 }
 
 func (m Map) readFrom(nbf *NomsBinFormat, b *binaryNomsReader) (Value, error) {
-	panic("unreachable")
+	panic("unreachable 24")
 }
 
 func (m Map) skip(nbf *NomsBinFormat, b *binaryNomsReader) {
-	panic("unreachable")
+	panic("unreachable 25")
 }
 
 func (m Map) String() string {
-	panic("unreachable")
+	panic("unreachable 26")
 }
 
 func (m Map) HumanReadableString() string {
-	panic("unreachable")
+	panic("unreachable 27")
 }
 
 // VisitMapLevelOrder writes hashes of internal node chunks to a writer
