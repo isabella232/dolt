@@ -23,7 +23,6 @@ import (
 	"github.com/dolthub/go-mysql-server/enginetest"
 	"github.com/dolthub/go-mysql-server/sql"
 	"github.com/dolthub/go-mysql-server/sql/plan"
-	"github.com/pkg/profile"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -49,7 +48,6 @@ func init() {
 }
 
 func TestQueries(t *testing.T) {
-	defer profile.Start().Stop()
 	enginetest.TestQueries(t, newDoltHarness(t))
 }
 
