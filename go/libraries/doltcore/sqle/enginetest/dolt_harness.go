@@ -16,10 +16,13 @@ package enginetest
 
 import (
 	"context"
+	"github.com/dolthub/dolt/go/libraries/doltcore/env/actions"
+	"github.com/dolthub/dolt/go/store/datas"
 	"runtime"
 	"strings"
 	"testing"
 
+	gms "github.com/dolthub/go-mysql-server"
 	"github.com/dolthub/go-mysql-server/enginetest"
 	"github.com/dolthub/go-mysql-server/sql"
 	"github.com/stretchr/testify/require"
@@ -45,6 +48,7 @@ type DoltHarness struct {
 	session              *dsess.DoltSession
 	databases            []sqle.Database
 	databaseGlobalStates []globalstate.GlobalState
+	hashes               []*doltdb.Commit
 	parallelism          int
 	skippedQueries       []string
 }
@@ -96,17 +100,202 @@ var defaultSkippedQueries = []string{
 	"show global variables like", // we set extra variables
 }
 
+func (d *DoltHarness) NewEngine(ctx *sql.Context, t *testing.T) *gms.Engine {
+	dbs := enginetest.CreateTestData(t, d)
+	ctx = d.NewContext()
+	err := d.checkpointWs(ctx, dbs)
+	if err != nil {
+		panic(err)
+	}
+	engine := enginetest.NewEngineWithDbs(t, d, dbs)
+	return engine
+}
+
+func (d *DoltHarness) checkpointWs(ctx *sql.Context, dbs []sql.Database) error {
+	hashes := make([]*doltdb.Commit, len(dbs))
+	for i := range dbs {
+		db := dbs[i].(sqle.Database)
+		dSess := dsess.DSessFromSess(ctx.Session)
+		roots, ok := dSess.GetRoots(ctx, db.Name())
+		ws, err := dSess.WorkingSet(ctx, db.Name())
+		wsFromHash, err := ws.HashOf()
+		if !ok {
+			panic("database not found")
+		}
+
+		roots, err = actions.StageAllTables(ctx, roots, nil)
+		if err != nil {
+			return err
+		}
+		//err = db.DbData().Rsw.UpdateStagedRoot(ctx, roots.Staged)
+		//err = db.DbData().Rsw.UpdateWorkingRoot(ctx, roots.Working)
+		ws = ws.WithWorkingRoot(roots.Working).WithStagedRoot(roots.Staged)
+		err = db.GetDoltDB().UpdateWorkingSet(ctx, ws.Ref(), ws, wsFromHash, doltdb.TodoWorkingSetMeta())
+
+		//ws, err := dSess.WorkingSet(ctx, db.Name())
+		//ws, err := db.GetWorkingSet(ctx)
+		//prevHash, err := ws.HashOf()
+		txBeginWs, err := db.GetDoltDB().ResolveWorkingSet(ctx, ws.Ref())
+		if err != nil {
+			panic("couldn't get working set: " + err.Error())
+		}
+		prevHash, err := txBeginWs.HashOf()
+		if err != nil {
+			panic(err)
+		}
+
+		var mergeParentCommits []*doltdb.Commit
+		if ws.MergeActive() {
+			mergeParentCommits = []*doltdb.Commit{ws.MergeState().Commit()}
+		}
+
+		t := datas.CommitNowFunc()
+		if err != nil {
+			panic("couldn't get roots: " + err.Error())
+		}
+		pendingCommit, err := actions.GetCommitStaged(ctx, roots, ws.MergeActive(), mergeParentCommits, db.DbData(), actions.CommitStagedProps{
+			Message:    "auto commit",
+			Date:       t,
+			AllowEmpty: true,
+			Force:      false,
+			Name:       user,
+			Email:      email,
+		})
+		if err != nil {
+			panic("pending commit error: " + err.Error())
+		}
+
+		commit, err := db.GetDoltDB().CommitWithWorkingSet(
+			ctx,
+			db.DbData().Rsr.CWBHeadRef(),
+			ws.Ref(),
+			pendingCommit,
+			ws.WithStagedRoot(pendingCommit.Roots.Staged).WithWorkingRoot(pendingCommit.Roots.Working).ClearMerge(),
+			prevHash,
+			doltdb.TodoWorkingSetMeta(),
+		)
+		if err != nil {
+			return err
+		}
+		hashes[i] = commit
+	}
+	d.hashes = hashes
+	return nil
+
+}
+
+func checkpointWs(ctx *sql.Context, dbs []sql.Database) error {
+	hashes := make([]*doltdb.Commit, len(dbs))
+	for i := range dbs {
+		db := dbs[i].(sqle.Database)
+		dSess := dsess.DSessFromSess(ctx.Session)
+		roots, ok := dSess.GetRoots(ctx, db.Name())
+		if !ok {
+			panic("database not found")
+		}
+		tableNames, err := db.GetTableNames(ctx)
+		cmRoot, err := roots.Working.UpdateSuperSchemasFromOther(ctx, tableNames, roots.Working)
+		err = db.DbData().Rsw.UpdateWorkingRoot(ctx, cmRoot)
+		if err != nil {
+			return err
+		}
+		err = db.DbData().Rsw.UpdateStagedRoot(ctx, cmRoot)
+		if err != nil {
+			return err
+		}
+		_, h, err := db.GetDoltDB().WriteRootValue(ctx, cmRoot)
+		meta, err := datas.NewCommitMeta("max max", "max@max.max", "Setup data")
+		cm, err := db.GetDoltDB().CommitWithParentCommits(ctx, h, db.DbData().Rsr.CWBHeadRef(), nil, meta)
+		if err != nil {
+			return err
+		}
+		hashes[i] = cm
+	}
+	//d.hashes = hashes
+	return nil
+}
+
+func (d *DoltHarness) RestoreCheckpoint(ctx *sql.Context, t *testing.T) *gms.Engine {
+	// reset database workingsets
+	for i := range d.databases {
+		db := d.databases[i]
+
+		// ctx isn't used by the nomsBlockStore to get DS
+		ddb := db.GetDoltDB()
+		dSess := dsess.DSessFromSess(ctx.Session)
+		roots, ok := dSess.GetRoots(ctx, db.Name())
+		if !ok {
+			panic("database not found")
+		}
+		h, err := d.hashes[i].HashOf()
+		//cm, roots, err := actions.ResetHardTables(ctx, db.DbData(), h.String(), roots)
+		//err := db.DbData().Rsw.UpdateWorkingRoot(ctx, roots.Head)
+		//if err != nil {
+		//	panic("database not found")
+		//}
+		//err = db.DbData().Rsw.UpdateStagedRoot(ctx, roots.Head)
+		//if err != nil {
+		//	panic("database not found")
+		//}
+		ws, err := dSess.WorkingSet(ctx, db.Name())
+		txBeginWs, err := db.GetDoltDB().ResolveWorkingSet(ctx, ws.Ref())
+		if err != nil {
+			panic("couldn't get working set: " + err.Error())
+		}
+		wsFromHash, err := txBeginWs.HashOf()
+		if err != nil {
+			panic(err)
+		}
+
+		_, newRoots, err := actions.ResetHardTables(ctx, db.DbData(), h.String(), roots)
+
+		//if err != nil {
+		//	panic(err)
+		//}
+		err = ddb.SetHeadToCommit(ctx, db.DbData().Rsr.CWBHeadRef(), d.hashes[i])
+		//err := ddb.SetHead(ctx, ref.NewBranchRef("main"), d.hashes[i])
+		if err != nil {
+			panic(err)
+		}
+		err = db.GetDoltDB().UpdateWorkingSet(ctx, ws.Ref(), ws.WithStagedRoot(newRoots.Staged).WithWorkingRoot(newRoots.Working), wsFromHash, doltdb.TodoWorkingSetMeta())
+
+		//ws, err := dSess.WorkingSet(ctx, db.Name())
+		if err != nil {
+			panic(err)
+		}
+		//err = dSess.SetWorkingSet(ctx, db.Name(), ws.WithWorkingRoot(roots.Working).WithStagedRoot(roots.Staged))
+		//if err != nil {
+		//	panic(err)
+		//}
+
+		//err := db.SetRoot(ctx, d.hashes[i])
+		//d.databases[i] = sqle.NewDatabase(db.Name(), env.DbData{
+		//	Ddb: ddb,
+		//	Rsw: db.DbData().Rsw,
+		//	Rsr: db.DbData().Rsr,
+		//	Drw: db.DbData().Drw,
+		//}, db.EditOptions())
+	}
+	// throw away session
+	//d.session = d.newSessionWithClient(sql.Client{Address: "localhost", User: "root"})
+	//d.session.SetCurrentDatabase("mydb")
+	// the enginetest has to create the new contetx
+	return enginetest.NewEngineWithDbs(t, d, dsqleDBsAsSqlDBs(d.databases))
+}
+
 // WithParallelism returns a copy of the harness with parallelism set to the given number of threads. A value of 0 or
 // less means to use the system parallelism settings.
-func (d DoltHarness) WithParallelism(parallelism int) *DoltHarness {
-	d.parallelism = parallelism
-	return &d
+func (d *DoltHarness) WithParallelism(parallelism int) *DoltHarness {
+	nd := *d
+	nd.parallelism = parallelism
+	return &nd
 }
 
 // WithSkippedQueries returns a copy of the harness with the given queries skipped
-func (d DoltHarness) WithSkippedQueries(queries []string) *DoltHarness {
-	d.skippedQueries = append(d.skippedQueries, queries...)
-	return &d
+func (d *DoltHarness) WithSkippedQueries(queries []string) *DoltHarness {
+	nd := *d
+	nd.skippedQueries = append(d.skippedQueries, queries...)
+	return &nd
 }
 
 // SkipQueryTest returns whether to skip a query

@@ -219,7 +219,7 @@ func TestReplaceIntoErrors(t *testing.T) {
 func TestUpdate(t *testing.T) {
 	var skipped []string
 	if types.IsFormat_DOLT_1(types.Format_Default) {
-		// skip update ffor join
+		// skip update for join
 		patternToSkip := "join"
 		skipped = make([]string, 0)
 		for _, q := range enginetest.UpdateTests {
