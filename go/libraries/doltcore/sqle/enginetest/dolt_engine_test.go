@@ -241,6 +241,14 @@ func TestDeleteFromErrors(t *testing.T) {
 	enginetest.TestDeleteErrors(t, newDoltHarness(t))
 }
 
+func TestSpatialDelete(t *testing.T) {
+	enginetest.TestSpatialDelete(t, newDoltHarness(t))
+}
+
+func TestSpatialScripts(t *testing.T) {
+	enginetest.TestSpatialScripts(t, newDoltHarness(t))
+}
+
 func TestTruncate(t *testing.T) {
 	skipNewFormat(t)
 	enginetest.TestTruncate(t, newDoltHarness(t))
