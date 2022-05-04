@@ -111,8 +111,8 @@ func TestSingleScript(t *testing.T) {
 		myDb := harness.NewDatabase("mydb")
 		databases := []sql.Database{myDb}
 		engine := enginetest.NewEngineWithDbs(t, harness, databases)
-		engine.Analyzer.Debug = true
-		engine.Analyzer.Verbose = true
+		//engine.Analyzer.Debug = true
+		//engine.Analyzer.Verbose = true
 		enginetest.TestScriptWithEngine(t, engine, harness, test)
 	}
 }
@@ -404,17 +404,22 @@ func TestDropDatabase(t *testing.T) {
 }
 
 func TestCreateForeignKeys(t *testing.T) {
-	skipNewFormat(t)
 	enginetest.TestCreateForeignKeys(t, newDoltHarness(t))
 }
 
 func TestDropForeignKeys(t *testing.T) {
-	skipNewFormat(t)
 	enginetest.TestDropForeignKeys(t, newDoltHarness(t))
 }
 
 func TestForeignKeys(t *testing.T) {
-	skipNewFormat(t)
+	if types.IsFormat_DOLT_1(types.Format_Default) {
+		for i := len(enginetest.ForeignKeyTests) - 1; i >= 0; i-- {
+			//TODO: test uses ALTER TABLE MODIFY COLUMN which is not yet supported in new format
+			if enginetest.ForeignKeyTests[i].Name == "ALTER TABLE SET NULL on non-nullable column" {
+				enginetest.ForeignKeyTests = append(enginetest.ForeignKeyTests[:i], enginetest.ForeignKeyTests[i+1:]...)
+			}
+		}
+	}
 	enginetest.TestForeignKeys(t, newDoltHarness(t))
 }
 

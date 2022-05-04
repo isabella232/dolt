@@ -53,12 +53,15 @@ type skipNode struct {
 }
 
 func NewSkipList(cmp ValueCmp) (l *List) {
-	l = &List{
-		// todo(andy): buffer pool
-		nodes: make([]skipNode, 1, 128),
-		cmp:   cmp,
-		src:   rand.NewSource(0),
-	}
+	l = &List{cmp: cmp}
+	l.Reset()
+	return
+}
+
+func (l *List) Reset() {
+	// todo(andy): buffer pool
+	l.nodes = make([]skipNode, 1, 128)
+	l.src = rand.NewSource(0)
 
 	// initialize sentinel node
 	l.nodes[sentinelId] = skipNode{
@@ -68,8 +71,6 @@ func NewSkipList(cmp ValueCmp) (l *List) {
 		next:   skipPointer{},
 		prev:   sentinelId,
 	}
-
-	return
 }
 
 func (l *List) Count() int {
