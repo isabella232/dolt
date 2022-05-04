@@ -89,7 +89,7 @@ func TestVarStringConvertValueToNomsValue(t *testing.T) {
 		{
 			generateVarStringType(t, 10, true),
 			[]byte("0  "),
-			"0  ", // converting to nomsValue counts as storage, thus we don't trim then
+			"0  ", // converting to NomsValue counts as storage, thus we don't trim then
 			false,
 		},
 		{
@@ -200,7 +200,7 @@ func TestVarStringParseValue(t *testing.T) {
 		{
 			generateVarStringType(t, 10, true),
 			"0  ",
-			"0  ", // converting to nomsValue counts as storage, thus we don't trim then
+			"0  ", // converting to NomsValue counts as storage, thus we don't trim then
 			false,
 		},
 		{
