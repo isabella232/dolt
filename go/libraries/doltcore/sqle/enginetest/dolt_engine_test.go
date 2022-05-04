@@ -144,7 +144,6 @@ func TestSingleQueryPrepared(t *testing.T) {
 }
 
 func TestVersionedQueries(t *testing.T) {
-	skipNewFormat(t)
 	enginetest.TestVersionedQueries(t, newDoltHarness(t))
 }
 
@@ -346,7 +345,6 @@ func TestUserPrivileges(t *testing.T) {
 }
 
 func TestUserAuthentication(t *testing.T) {
-	skipNewFormat(t)
 	enginetest.TestUserAuthentication(t, newDoltHarness(t))
 }
 
@@ -561,6 +559,11 @@ func TestTransactions(t *testing.T) {
 	for _, script := range DoltSqlFuncTransactionTests {
 		enginetest.TestTransactionScript(t, newDoltHarness(t), script)
 	}
+}
+
+func TestConcurrentTransactions(t *testing.T) {
+	skipNewFormat(t)
+	enginetest.TestConcurrentTransactions(t, newDoltHarness(t))
 }
 
 func TestDoltScripts(t *testing.T) {
