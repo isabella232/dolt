@@ -38,6 +38,15 @@ type Cursor struct {
 	nrw      NodeStore
 }
 
+type SubtreeCounts []uint64
+
+func (sc SubtreeCounts) Sum() (s uint64) {
+	for _, count := range sc {
+		s += count
+	}
+	return
+}
+
 type CompareFn func(left, right Item) int
 
 type SearchFn func(nd Node) (idx int)
@@ -219,7 +228,7 @@ func (cur *Cursor) CurrentValue() Item {
 }
 
 func (cur *Cursor) CurrentRef() hash.Hash {
-	return cur.nd.getChildAddress(cur.idx)
+	return cur.nd.getAddress(cur.idx)
 }
 
 func (cur *Cursor) currentSubtreeSize() uint64 {
@@ -486,12 +495,6 @@ func fetchChild(ctx context.Context, ns NodeStore, ref hash.Hash) (Node, error) 
 
 func assertTrue(b bool) {
 	if !b {
-		panic("assertion failed")
-	}
-}
-
-func assertFalse(b bool) {
-	if b {
 		panic("assertion failed")
 	}
 }

@@ -26,6 +26,7 @@ import (
 
 	"github.com/dolthub/dolt/go/store/hash"
 	"github.com/dolthub/dolt/go/store/pool"
+	"github.com/dolthub/dolt/go/store/prolly/message"
 	"github.com/dolthub/dolt/go/store/prolly/tree"
 	"github.com/dolthub/dolt/go/store/val"
 )
@@ -93,8 +94,8 @@ func TestNewEmptyNode(t *testing.T) {
 	empty := newEmptyMapNode(sharedPool)
 	assert.Equal(t, 0, empty.Level())
 	assert.Equal(t, 0, empty.Count())
-	assert.Equal(t, 68, empty.Size())
 	assert.Equal(t, 0, empty.TreeCount())
+	assert.Equal(t, 72, empty.Size())
 	assert.True(t, empty.IsLeaf())
 }
 
@@ -131,7 +132,8 @@ func prollyMapFromTuples(t *testing.T, kd, vd val.TupleDesc, tuples [][2]val.Tup
 	ctx := context.Background()
 	ns := tree.NewTestNodeStore()
 
-	chunker, err := tree.NewEmptyChunker(ctx, ns, newMapBuilder)
+	serializer := message.ProllyMapSerializer{Pool: ns.Pool()}
+	chunker, err := tree.NewEmptyChunker(ctx, ns, serializer)
 	require.NoError(t, err)
 
 	for _, pair := range tuples {
