@@ -36,7 +36,8 @@ import (
 )
 
 var skipPrepared bool
-var skipPreparedFlag = "DOLT_SKIP_PREPARED_ENGINETESTS"
+
+const skipPreparedFlag = "DOLT_SKIP_PREPARED_ENGINETESTS"
 
 func init() {
 	sqle.MinRowsPerPartition = 8
@@ -44,6 +45,10 @@ func init() {
 
 	if v := os.Getenv(skipPreparedFlag); v != "" {
 		skipPrepared = true
+	}
+
+	if v := os.Getenv("DOLT_FORMAT_FEATURE_FLAG"); v != "" {
+		enginetest.SetSpatialSupported(false)
 	}
 }
 
@@ -242,10 +247,12 @@ func TestDeleteFromErrors(t *testing.T) {
 }
 
 func TestSpatialDelete(t *testing.T) {
+	skipNewFormat(t)
 	enginetest.TestSpatialDelete(t, newDoltHarness(t))
 }
 
 func TestSpatialScripts(t *testing.T) {
+	skipNewFormat(t)
 	enginetest.TestSpatialScripts(t, newDoltHarness(t))
 }
 

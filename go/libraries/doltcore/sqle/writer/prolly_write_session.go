@@ -193,5 +193,25 @@ func (s *prollyWriteSession) setWorkingSet(ctx context.Context, ws *doltdb.Worki
 		delete(s.tables, name)
 	}
 	s.workingSet = ws
+
+	root := ws.WorkingRoot()
+	if err := s.updateAutoIncrementSequences(ctx, root); err != nil {
+		return err
+	}
+
 	return nil
+}
+
+func (s *prollyWriteSession) updateAutoIncrementSequences(ctx context.Context, root *doltdb.RootValue) error {
+	return root.IterTables(ctx, func(name string, table *doltdb.Table, sch schema.Schema) (stop bool, err error) {
+		if !schema.HasAutoIncrement(sch) {
+			return
+		}
+		v, err := table.GetAutoIncrementValue(ctx)
+		if err != nil {
+			return true, err
+		}
+		s.tracker.Set(name, v)
+		return
+	})
 }

@@ -118,6 +118,8 @@ func (d *DoltHarness) checkpointWs(ctx *sql.Context, e *gms.Engine) (*gms.Engine
 		res := mustCall(ctx, e, fmt.Sprintf("call dolt_commit('--allow-empty', '-am', 'checkpoint enginetest database %s')", db))
 		d.hashes[i] = res[0][0].(string)
 	}
+	mustCall(ctx, e, fmt.Sprintf("use mydb"))
+
 	return e, nil
 }
 
@@ -137,8 +139,9 @@ func (d *DoltHarness) RestoreCheckpoint(ctx *sql.Context, t *testing.T, e *gms.E
 	for i := range d.databases {
 		db := d.databases[i].Name()
 		mustCall(ctx, e, fmt.Sprintf("use %s", db))
-		mustCall(ctx, e, fmt.Sprintf("call dolt_reset('--hard', '%s')", d.hashes[i]))
+		mustCall(ctx, e, fmt.Sprintf("call dolt_reset('--hard')"))
 	}
+	mustCall(ctx, e, fmt.Sprintf("use mydb"))
 	return e
 }
 
